@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Definite Ingetration | Class 11a3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Modern CSS Reset and Base Styles - Dark Mode */
+      :root {
+        --primary: #0070f3;
+        --primary-dark: #0060df;
+        --secondary: #7928ca;
+        --accent: #ff4d4d;
+        --background: #0f1117;
+        --foreground: #ffffff;
+        --card-background: #1a1d25;
+        --muted: #1e2028;
+        --muted-foreground: #a1a1aa;
+        --border: #2e2e3a;
+        --radius: 0.5rem;
+        --header-height: 4rem;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+          0 2px 4px -1px rgba(0, 0, 0, 0.26);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+          0 4px 6px -2px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        line-height: 1.6;
+        color: var(--foreground);
+        background-color: var(--background);
+        overflow-x: hidden;
+        font-size: 16px;
+        position: relative;
+      }
+
+      /* Math Symbols Background */
+      .math-symbols-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .math-symbol {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.03);
+        font-size: 3rem;
+        font-weight: 300;
+        animation: float 20s linear infinite;
+        z-index: -1;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.02;
+        }
+        90% {
+          opacity: 0.02;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Layout */
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .section {
+        padding: 5rem 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2rem;
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+      }
+
+      h1 {
+        font-size: 3.5rem;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 1.5rem;
+      }
+
+      h2 {
+        font-size: 2.25rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+      }
+
+      .text-gradient {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        color: var(--muted-foreground);
+        font-weight: 400;
+        max-width: 36rem;
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        padding: 12px 5px;
+
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(15, 17, 23, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 100;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        height: 100%;
+      }
+
+      .logo {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--foreground);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        color: var(--primary);
+      }
+
+      .class-info {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        background-color: rgba(0, 112, 243, 0.1);
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(0, 112, 243, 0.2);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: calc(var(--header-height) + 5rem) 0 5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-content {
+        grid-column: 1 / 8;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-image {
+        grid-column: 8 / 13;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-shape {
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 50%;
+        height: 140%;
+        background: linear-gradient(
+          45deg,
+          rgba(121, 40, 202, 0.1),
+          rgba(0, 112, 243, 0.1)
+        );
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        z-index: 1;
+        animation: morphing 15s ease-in-out infinite;
+      }
+
+      @keyframes morphing {
+        0% {
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        25% {
+          border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+        }
+        50% {
+          border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+        }
+        75% {
+          border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+        }
+        100% {
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+      }
+
+      /* Button */
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--primary);
+        color: white;
+        font-weight: 500;
+        border-radius: var(--radius);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+      }
+
+      .button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .button-secondary {
+        background-color: var(--card-background);
+        color: var(--foreground);
+        border: 1px solid var(--border);
+      }
+
+      .button-secondary:hover {
+        background-color: var(--muted);
+        color: var(--primary);
+      }
+
+      /* Card */
+      .card {
+        background-color: var(--card-background);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid var(--border);
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(0, 112, 243, 0.3);
+      }
+
+      .card-content {
+        padding: 1.5rem;
+      }
+
+      /* Content Sections */
+      .slides-section,
+      .video-section,
+      .visual-section {
+        grid-column: span 12;
+      }
+
+      .slides-container,
+      .video-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        overflow: hidden;
+        border-radius: var(--radius);
+        background-color: var(--muted);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+      }
+
+      .slides-container:hover,
+      .video-container:hover {
+        box-shadow: var(--shadow-lg);
+      }
+
+      .slides-placeholder,
+      .video-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: var(--muted-foreground);
+        background-color: var(--muted);
+        border-radius: var(--radius);
+      }
+
+      .placeholder-icon {
+        margin-bottom: 1rem;
+        color: var(--primary);
+      }
+
+      .instructions {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background-color: var(--muted);
+        border-radius: var(--radius);
+        border-left: 4px solid var(--primary);
+      }
+
+      .instructions h3 {
+        margin-bottom: 1rem;
+        color: var(--foreground);
+      }
+
+      .instructions ol {
+        margin-left: 1.5rem;
+        color: var(--muted-foreground);
+      }
+
+      .instructions li {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: var(--muted);
+        padding: 3rem 0;
+        margin-top: 3rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer-text {
+        color: var(--muted-foreground);
+      }
+
+      /* Teacher info */
+      .teacher-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(0, 112, 243, 0.05);
+        border-radius: var(--radius);
+        border: 1px solid rgba(0, 112, 243, 0.1);
+      }
+
+      .teacher-avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.25rem;
+      }
+
+      .teacher-details h3 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .teacher-details p {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        margin-bottom: 0;
+      }
+
+      /* Visual Math Section */
+      .visual-math {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        border-radius: var(--radius);
+        background-color: var(--card-background);
+      }
+
+      .math-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Fractal Grid */
+      .fractal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .fractal-item {
+        aspect-ratio: 1;
+        border-radius: var(--radius);
+        overflow: hidden;
+        position: relative;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+      }
+
+      .fractal-item:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .fractal-1 {
+        background: linear-gradient(45deg, #0070f3, #7928ca);
+      }
+
+      .fractal-2 {
+        background: linear-gradient(135deg, #7928ca, #ff0080);
+      }
+
+      .fractal-3 {
+        background: linear-gradient(225deg, #ff0080, #0070f3);
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .hero-content,
+        .hero-image {
+          grid-column: span 12;
+        }
+
+        .hero-image {
+          margin-top: 2rem;
+        }
+
+        h1 {
+          font-size: 3rem;
+        }
+
+        .teacher-container {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .section {
+          padding: 3rem 0;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        h2 {
+          font-size: 2rem;
+        }
+
+        .grid {
+          gap: 1.5rem;
+        }
+
+        .fractal-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        .container {
+          padding: 0 1rem;
+        }
+
+        .fractal-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Animation utilities */
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .delay-1 {
+        animation-delay: 0.1s;
+      }
+
+      .delay-2 {
+        animation-delay: 0.2s;
+      }
+
+      .delay-3 {
+        animation-delay: 0.3s;
+      }
+
+      /* Glow effects */
+      .glow {
+        position: relative;
+      }
+
+      .glow::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          circle,
+          rgba(0, 112, 243, 0.1) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        z-index: -1;
+      }
+
+      /* Particle system */
+      .particle {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* Geometric patterns */
+      .geometric-pattern {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .geometric-shape {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transform-origin: center;
+        animation: rotate 20s linear infinite;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Pulse animation */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+      }
+
+      .pulse {
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      /* Teacher container */
+      .teacher-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      /* Integral animation */
+      .integral-animation {
+        position: relative;
+        height: 100px;
+        margin: 2rem 0;
+        overflow: hidden;
+      }
+
+      .integral-path {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: drawPath 5s ease-in-out forwards;
+      }
+
+      @keyframes drawPath {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Math Symbols Background -->
+    <div class="math-symbols-bg">
+      <span
+        class="math-symbol"
+        style="top: 10%; left: 5%; animation-duration: 25s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 15%; left: 15%; animation-duration: 30s"
+        >dx</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 25%; left: 25%; animation-duration: 35s"
+        >∂</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 35%; left: 10%; animation-duration: 28s"
+        >∞</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 45%; left: 20%; animation-duration: 32s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 55%; left: 5%; animation-duration: 27s"
+        >∂</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 65%; left: 15%; animation-duration: 33s"
+        >∇</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 75%; left: 25%; animation-duration: 29s"
+        >∆</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 85%; left: 10%; animation-duration: 31s"
+        >∏</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 10%; left: 75%; animation-duration: 26s"
+        >f(x)</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 20%; left: 85%; animation-duration: 34s"
+        >dx</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 30%; left: 70%; animation-duration: 29s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 40%; left: 80%; animation-duration: 32s"
+        >F(x)</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 50%; left: 90%; animation-duration: 28s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 60%; left: 75%; animation-duration: 30s"
+        >dx</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 70%; left: 85%; animation-duration: 27s"
+        >∂y</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 80%; left: 70%; animation-duration: 33s"
+        >∂x</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 90%; left: 80%; animation-duration: 31s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 15%; left: 45%; animation-duration: 29s"
+        >f'(x)</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 35%; left: 55%; animation-duration: 32s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 55%; left: 45%; animation-duration: 28s"
+        >dx</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 75%; left: 55%; animation-duration: 30s"
+        >∫</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 25%; left: 40%; animation-duration: 27s"
+        >F(b)</span
+      >
+      <span
+        class="math-symbol"
+        style="top: 45%; left: 60%; animation-duration: 33s"
+        >F(a)</span
+      >
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="container header-container">
+        <a href="#" class="logo">
+          <svg
+            class="logo-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="14.31" y1="8" x2="20.05" y2="17.94"></line>
+            <line x1="9.69" y1="8" x2="21.17" y2="8"></line>
+            <line x1="7.38" y1="12" x2="13.12" y2="2.06"></line>
+            <line x1="9.69" y1="16" x2="3.95" y2="6.06"></line>
+            <line x1="14.31" y1="16" x2="2.83" y2="16"></line>
+            <line x1="16.62" y1="12" x2="10.88" y2="21.94"></line>
+          </svg>
+          <span>Definite Integrals - Davud & Javid</span>
+        </a>
+        <div class="class-info">Class: 11a3</div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-shape"></div>
+      <div class="container">
+        <div class="grid">
+          <div class="hero-content fade-in">
+            <h1>Definite Integrals</h1>
+            <p class="subtitle">
+              From Limits to Area — The Calculus of Accumulation
+            </p>
+
+            <div class="teacher-container">
+              <div class="teacher-info">
+                <div class="teacher-avatar">J</div>
+                <div class="teacher-details">
+                  <h3>Javid Quluzade</h3>
+                  <p>Substitute Teacher</p>
+                </div>
+              </div>
+
+              <div class="teacher-info">
+                <div class="teacher-avatar">D</div>
+                <div class="teacher-details">
+                  <h3>Davud Ibrahim</h3>
+                  <p>Substitute Teacher</p>
+                </div>
+              </div>
+            </div>
+
+            <p class="subtitle" style="margin-top: 1rem; font-size: 0.875rem">
+              Substituting for Miss Shams
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Visual Math Section -->
+        <section class="section">
+          <div class="grid">
+            <div class="visual-section fade-in delay-2">
+              <h2>
+                Cool visual
+                <span class="text-gradient"
+                  >that shows integration and differentiation</span
+                >
+              </h2>
+              <div class="visual-math">
+                <canvas id="mathCanvas" class="math-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slides Section -->
+        <section class="section">
+          <div class="grid">
+            <div class="slides-section fade-in delay-2">
+              <h2>Today's <span class="text-gradient">Lesson</span></h2>
+              <div class="slides-container">
+                <!-- Replace the src with your Google Slides embed URL -->
+                <iframe
+                  id="slides-frame"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                  "
+                  allowfullscreen
+                ></iframe>
+
+                <div class="slides-placeholder">
+                  <svg
+                    class="placeholder-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
+                    ></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                  </svg>
+                  <p>Add your Google Slides presentation here</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Video Section -->
+        <section class="section">
+          <div class="grid">
+            <div class="video-section fade-in delay-3">
+              <h2>Calculus <span class="text-gradient">Animation</span></h2>
+              <div class="video-container">
+                <!-- Replace with your video source -->
+                <video
+                  id="math-video"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: var(--radius);
+                  "
+                  controls
+                >
+                  <source src="Riemann.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+
+                <div class="video-placeholder">
+                  <svg
+                    class="placeholder-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                    <rect
+                      x="1"
+                      y="5"
+                      width="15"
+                      height="14"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                  </svg>
+                  <p>Add your calculus animation video here</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      // This script will hide the placeholders once content is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        const slidesFrame = document.getElementById("slides-frame");
+        const slidesPlaceholder = document.querySelector(".slides-placeholder");
+
+        // When you add the src to the iframe, add this code to hide the placeholder
+        slidesFrame.addEventListener("load", function () {
+          if (slidesFrame.src) {
+            slidesPlaceholder.style.display = "none";
+          }
+        });
+
+        const mathVideo = document.getElementById("math-video");
+        const videoPlaceholder = document.querySelector(".video-placeholder");
+
+        // When you add the src to the video, add this code to hide the placeholder
+        mathVideo.addEventListener("loadeddata", function () {
+          if (mathVideo.querySelector("source").src) {
+            videoPlaceholder.style.display = "none";
+          }
+        });
+
+        // Canvas animation - Calculus themed
+        const canvas = document.getElementById("mathCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas dimensions
+        function resizeCanvas() {
+          canvas.width = canvas.parentElement.offsetWidth;
+          canvas.height = canvas.parentElement.offsetHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        // Function to draw a curve
+        function drawCurve(t) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw coordinate system
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+          ctx.lineWidth = 1;
+
+          // x-axis
+          ctx.beginPath();
+          ctx.moveTo(0, canvas.height / 2);
+          ctx.lineTo(canvas.width, canvas.height / 2);
+          ctx.stroke();
+
+          // y-axis
+          ctx.beginPath();
+          ctx.moveTo(canvas.width / 2, 0);
+          ctx.lineTo(canvas.width / 2, canvas.height);
+          ctx.stroke();
+
+          // Draw function curve
+          ctx.strokeStyle = "#0070f3";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+
+          const amplitude = canvas.height / 4;
+          const frequency = (Math.PI * 2) / canvas.width;
+
+          ctx.moveTo(0, canvas.height / 2 - Math.sin(0) * amplitude);
+
+          for (let x = 0; x < canvas.width; x++) {
+            const y =
+              canvas.height / 2 - Math.sin(x * frequency * 3 + t) * amplitude;
+            ctx.lineTo(x, y);
+          }
+
+          ctx.stroke();
+
+          // Draw integral area (area under the curve)
+          const startX = canvas.width / 4;
+          const endX = (3 * canvas.width) / 4;
+
+          ctx.fillStyle = "rgba(121, 40, 202, 0.2)";
+          ctx.beginPath();
+          ctx.moveTo(startX, canvas.height / 2);
+
+          for (let x = startX; x <= endX; x++) {
+            const y =
+              canvas.height / 2 - Math.sin(x * frequency * 3 + t) * amplitude;
+            ctx.lineTo(x, y);
+          }
+
+          ctx.lineTo(endX, canvas.height / 2);
+          ctx.closePath();
+          ctx.fill();
+
+          // Draw integral bounds
+          ctx.strokeStyle = "#7928ca";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+
+          // Left bound
+          ctx.beginPath();
+          ctx.moveTo(startX, canvas.height / 2 + amplitude);
+          ctx.lineTo(startX, canvas.height / 2 - amplitude);
+          ctx.stroke();
+
+          // Right bound
+          ctx.beginPath();
+          ctx.moveTo(endX, canvas.height / 2 + amplitude);
+          ctx.lineTo(endX, canvas.height / 2 - amplitude);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+
+          // Draw integral symbol
+          ctx.font = "24px serif";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.fillText("∫", startX - 20, canvas.height / 2);
+
+          // Draw dx
+          ctx.font = "16px serif";
+          ctx.fillText("dx", endX + 10, canvas.height / 2);
+
+          // Draw a and b bounds
+          ctx.font = "14px serif";
+          ctx.fillText("a", startX - 5, canvas.height / 2 + amplitude + 20);
+          ctx.fillText("b", endX - 5, canvas.height / 2 + amplitude + 20);
+
+          // Draw tangent line at a point that moves along the curve
+          const tangentX =
+            startX + (endX - startX) * (0.5 + 0.5 * Math.sin(t / 2));
+          const tangentY =
+            canvas.height / 2 -
+            Math.sin(tangentX * frequency * 3 + t) * amplitude;
+
+          // Calculate derivative at the point (slope of tangent)
+          const h = 0.0001;
+          const y1 =
+            canvas.height / 2 -
+            Math.sin((tangentX + h) * frequency * 3 + t) * amplitude;
+          const y2 =
+            canvas.height / 2 -
+            Math.sin((tangentX - h) * frequency * 3 + t) * amplitude;
+          const slope = (y1 - y2) / (2 * h);
+
+          // Draw tangent line
+          ctx.strokeStyle = "rgba(255, 77, 77, 0.8)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(tangentX - 50, tangentY - slope * 50);
+          ctx.lineTo(tangentX + 50, tangentY + slope * 50);
+          ctx.stroke();
+
+          // Draw point on curve
+          ctx.fillStyle = "#ff4d4d";
+          ctx.beginPath();
+          ctx.arc(tangentX, tangentY, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Animation loop
+        let t = 0;
+        function animate() {
+          drawCurve(t);
+          t += 0.02;
+          requestAnimationFrame(animate);
+        }
+
+        animate();
+      });
+    </script>
+  </body>
+</html>
